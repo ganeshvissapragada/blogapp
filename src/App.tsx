@@ -16,6 +16,7 @@ function App() {
       const titles: Record<string, string> = {
         home: 'BlogSphere - Dark Glass PWA',
         blogs: 'Blogs - BlogSphere',
+        'my-blogs': 'My Blogs - BlogSphere',
         login: 'Login - BlogSphere'
       };
       
@@ -41,6 +42,8 @@ function App() {
         return <LandingPage onNavigate={handleNavigate} />;
       case 'blogs':
         return <BlogList />;
+      case 'my-blogs':
+        return <BlogList filterByUser={true} />;
       case 'login':
         return <Auth onNavigate={handleNavigate} />;
       default:

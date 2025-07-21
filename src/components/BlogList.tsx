@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { Plus, Search, Calendar, User, Tag } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import { useBlog } from '../contexts/BlogContext';
 import { useAuth } from '../contexts/AuthContext';
 import BlogCard from './BlogCard';
 import BlogEditor from './BlogEditor';
 
-const BlogList: React.FC = () => {
+interface BlogListProps {
+  filterByUser?: boolean;
+}
+
+const BlogList: React.FC<BlogListProps> = ({ filterByUser = false }) => {
   const { blogs } = useBlog();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [showEditor, setShowEditor] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState('');
@@ -18,7 +22,8 @@ const BlogList: React.FC = () => {
     const matchesSearch = blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          blog.content.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTag = !selectedTag || blog.tags.includes(selectedTag);
-    return matchesSearch && matchesTag;
+    const matchesUser = !filterByUser || (user && blog.author.id === user.id);
+    return matchesSearch && matchesTag && matchesUser;
   });
 
   return (
@@ -28,10 +33,12 @@ const BlogList: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold text-white mb-2">
-              Discover Amazing Stories
+              {filterByUser ? 'My Blog Posts' : 'Discover Amazing Stories'}
             </h1>
             <p className="text-gray-300">
-              Explore {blogs.length} inspiring blog posts from our community
+              {filterByUser
+                ? `You have ${filteredBlogs.length} blog posts`
+                : `Explore ${blogs.length} inspiring blog posts from our community`}
             </p>
           </div>
           

@@ -25,9 +25,9 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            <button onClick={() => onNavigate('home')} className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
               BlogSphere
-            </h1>
+            </button>
             
             <div className="hidden md:flex space-x-6">
               <button
@@ -79,7 +79,10 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
             
             {user ? (
               <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => onNavigate('my-blogs')}
+                  className="flex items-center space-x-2"
+                >
                   {user.avatar && (
                     <img
                       src={user.avatar}
@@ -88,7 +91,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                     />
                   )}
                   <span className="text-white hidden sm:inline">{user.username}</span>
-                </div>
+                </button>
                 <button
                   onClick={logout}
                   className="px-3 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all duration-200"
