@@ -3,7 +3,8 @@ const urlsToCache = [
   '/',
   '/static/js/bundle.js',
   '/static/css/main.css',
-  '/manifest.json'
+  '/manifest.json',
+
 ];
 
 // Install Service Worker
@@ -15,15 +16,44 @@ self.addEventListener('install', (event) => {
 });
 
 // Fetch event - serve from cache when offline
+// fetch event - handles caching for both app shell and API data
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request);
-      }
-    )
-  );
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Use a different strategy for API calls vs. static assets
+  // This example assumes your API routes start with '/api/'
+  if (url.origin === self.location.origin && url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      // Stale-while-revalidate for API calls
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.match(request).then((cachedResponse) => {
+          const fetchPromise = fetch(request).then((networkResponse) => {
+            // If the fetch is successful, update the cache with the new response
+            cache.put(request, networkResponse.clone());
+            return networkResponse;
+          });
+          // Return the cached response immediately if available,
+          // otherwise wait for the network response.
+          return cachedResponse || fetchPromise;
+        });
+      })
+    );
+  } else {
+    // Cache-first strategy for all other requests (the app shell)
+    event.respondWith(
+      caches.match(request).then((cachedResponse) => {
+        return cachedResponse || fetch(request).then((networkResponse) => {
+          // Clone and cache the new response for future offline use
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(request, responseToCache);
+          });
+          return networkResponse;
+        });
+      })
+    );
+  }
 });
 
 // Push event for notifications
