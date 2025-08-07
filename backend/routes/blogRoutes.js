@@ -87,12 +87,14 @@ const updateBlogValidation = [
 // Public routes
 router.get('/', optionalAuth, getAllBlogs);
 router.get('/search', optionalAuth, searchBlogs);
-router.get('/:id', optionalAuth, getBlogById);
 
-// Protected routes
+// Protected routes - put specific routes before parameterized routes
+router.get('/user/my-blogs', authMiddleware, getUserBlogs);
 router.post('/', authMiddleware, blogValidation, createBlog);
 router.put('/:id', authMiddleware, updateBlogValidation, updateBlog);
 router.delete('/:id', authMiddleware, deleteBlog);
-router.get('/user/my-blogs', authMiddleware, getUserBlogs);
+
+// Parameterized routes last
+router.get('/:id', optionalAuth, getBlogById);
 
 export default router;

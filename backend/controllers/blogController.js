@@ -28,12 +28,15 @@ export const getAllBlogs = async (req, res) => {
 
     if (author) {
       options.authorId = parseInt(author);
+    } else if (req.user) {
+      // If user is authenticated and no specific author filter, show only their blogs
+      options.authorId = req.user.id;
     }
 
     const result = await Blog.findAll(options);
 
     res.json({
-      message: 'Blogs retrieved successfully',
+      message: req.user ? 'Your blogs retrieved successfully' : 'Blogs retrieved successfully',
       ...result
     });
   } catch (error) {

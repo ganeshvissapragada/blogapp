@@ -7,7 +7,16 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --testEnvironment=node",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --testEnvironment=node --watch"
+  },
+  "jest": {
+    "preset": "node",
+    "extensionsToTreatAsEsm": [".js"],
+    "globals": {
+      "NODE_OPTIONS": "--experimental-vm-modules"
+    },
+    "testMatch": ["**/tests/**/*.test.js"]
   },
   "keywords": [
     "blog",
@@ -19,17 +28,19 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
-    "mysql2": "^3.6.5",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "dotenv": "^16.3.1",
     "cors": "^2.8.5",
-    "helmet": "^7.1.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
-    "express-validator": "^7.0.1"
+    "express-validator": "^7.0.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.6.5"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "jest": "^30.0.5",
+    "nodemon": "^3.0.2",
+    "supertest": "^7.1.4"
   }
 }
